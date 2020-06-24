@@ -77,6 +77,7 @@ func CreateTask(w http.ResponseWriter, r *http.Request) {
   json.NewEncoder(w).Encode(task)
 }
 
+//TaskComplete route
 func TaskComplete(w http.ResponseWriter, r *http.Request) {
   w.Header().Set("Content-Type", "application/x-www-form-urlencoded")
   w.Header().Set("Access-Control-Allow-Origin", "*")
@@ -86,4 +87,74 @@ func TaskComplete(w http.ResponseWriter, r *http.Request) {
   params := mux.Vars(r)
   taskComplete(params["id"])
   json.NewEncoder(w).Encode(params["id"])
+}
+
+//UndoTask route
+func UndoTask(w http.ResponseWriter, r *http.Request) {
+  w.Header().Set("Content-Type", "application/x-www-form-urlencoded")
+  w.Header().Set("Access-Control-Allow-Origin", "*")
+  w.Header().Set("Access-Control-Allow-Methods", "PUT")
+  w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
+
+  params := mux.Vars(r)
+  undoTask(params["id"])
+  json.NewEncoder(w).Encode(params["id"])
+}
+
+//DeleteTask route
+func DeleteTask(w http.ResponseWriter, r *http.Request) {
+  w.Header().Set("Context-Type", "application/x-www-form-urlencoded")
+  w.Header().Set("Access-Control-Allow-Origin", "*")
+  w.Header().Set("Access-Control-Allow-Methods", "DELETE")
+  w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
+  params := mux.Vars(r)
+  deleteOneTask(params["id"])
+  json.NewEncoder(w).Encode(params["id"])
+  // json.NewEncoder(w).Encode("Task not found")
+}
+
+//DeleteAllTask route
+func DeleteAllTask(w http.ResponseWriter, r *http.Request) {
+  w.Header().Set("Context-Type", "application/x-www-form-urlencoded")
+  w.Header().Set("Access-Control-Allow-Origin", "*")
+  count := deleteAllTask()
+  json.NewEncoder(w).Encode(count)
+  // json.NewEncoder(w).Encode("Task not found")
+}
+
+//Get all tasks from the database and return it
+func getAllTask() []primitive.M {
+  cur, err := collection.Find(context.Background(), bson.D{{}})
+  if err != nil {
+    log.Fatal(err)
+  }
+
+  var results []primitive.M
+  for cur.Next(context.Background()) {
+    var result bson.M
+    e := cur.Decode(&result)
+    if e != nil {
+      log.Fatal(e)
+    }
+    // fmt.Println("cur..>", cur, "result", reflect.TypeOf(result), reflect.TypeOf(result["id"]))
+    results = append(results, result)
+  }
+
+  if err := cur.Err(); err != nil {
+    log.Fatal(err)
+  }
+
+  cur.Close(context.Background())
+  return results
+}
+
+//Insert one task into database
+func insertOneTask(task models.ToDoList) {
+  insertResult, err := collection.InsertOne(context.Background(), task)
+
+  if err != nil {
+    log.Fatal(err)
+  }
+
+  fmt.Println("Inserted a Single Record ", insertResult.InsertedID)
 }
