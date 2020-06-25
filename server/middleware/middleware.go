@@ -1,5 +1,7 @@
 package middleware
 
+//NOTE: Consider using mongoose instead of plain mongo
+
 import (
   "context"
   "encoding/json"
@@ -17,9 +19,9 @@ import (
 )
 
 //localhost mongodb
-const connectionString = "mongodb://localhost:27017"
+// const connectionString = "mongodb://localhost:27017"
 //otherwise
-//const connectionString = "Connection String"
+const connectionString = "mongodb+srv://admin:<password>@cluster0-akkyk.mongodb.net/<dbname>?retryWrites=true&w=majority"
 
 //database Name
 const dbName = "test"
@@ -157,4 +159,55 @@ func insertOneTask(task models.ToDoList) {
   }
 
   fmt.Println("Inserted a Single Record ", insertResult.InsertedID)
+}
+
+//Update task's status to true
+func taskComplete(task string) {
+  fmt.Println(task)
+  id, _ := primitive.ObjectIDFromHex(task)
+  filter := bson.M{"_id": id}
+  update := bson.M{"$set": bson.M{"status": true}}
+  result, err := collection.UpdateOne(context.Background(), filter, update)
+  if err != nil {
+    log.Fatal(err)
+  }
+  fmt.Println("modified count: ", result.ModifiedCount)
+
+}
+
+//Updates task's status to false
+func taskComplete(task string) {
+  fmt.Println(task)
+  id, _ := primitive.ObjectIDFromHex(task)
+  filter := bson.M{"_id": id}
+  update := bson.M{"set": bson.M{"status": false}}
+  result, err := collection.UpdateOne(context.Background(), filter, update)
+  if err != nil {
+    log.Fatal(err)
+  }
+  fmt.Println("modified count: ", result.ModifiedCount)
+}
+
+//Delete one task from the database
+func deleteOneTask(task string) {
+  fmt.Println(task)
+  id, _ := primitive.ObjectIDFromHex(task)
+  filter := bson.M{"_id": id}
+  d, err := collection.DeleteOne(context.Background(), filter)
+  if err != nil {
+    log.Fatal(err)
+  }
+
+  fmt.Println("Deleted Document", d.DeletedCount)
+}
+
+//Delete all tasks from the database
+func deleteAllTask() int64 {
+  d, err := collection.DeleteMany(context.Background(), bson.D{{}}, nil)
+  if err != nil {
+    log.Fatal(err)
+  }
+
+  fmt.Println("Deleted Document", d.DeletedCount)
+  return d.DeletedCount
 }
