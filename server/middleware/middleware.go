@@ -21,7 +21,8 @@ import (
 //localhost mongodb
 // const connectionString = "mongodb://localhost:27017"
 //otherwise
-const connectionString = "mongodb+srv://admin:<password>@cluster0-akkyk.mongodb.net/<dbname>?retryWrites=true&w=majority"
+//NOTE: Password is being displayed here because this is a test application, but this would be handled more securely in an actual application
+const connectionString = "mongodb+srv://admin:v6KxjskKNPGnBvO4@cluster0-akkyk.mongodb.net/test?retryWrites=true&w=majority"
 
 //database Name
 const dbName = "test"
@@ -176,7 +177,7 @@ func taskComplete(task string) {
 }
 
 //Updates task's status to false
-func taskComplete(task string) {
+func undoTask(task string) {
   fmt.Println(task)
   id, _ := primitive.ObjectIDFromHex(task)
   filter := bson.M{"_id": id}
