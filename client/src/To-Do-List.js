@@ -83,7 +83,7 @@ class ToDoList extends Component {
                     <Icon
                       name="delete"
                       color="red"
-                      onClick{() => this.deleteTask(item._id)}
+                      onClick={() => this.deleteTask(item._id)}
                     />
                     <span style={{ paddingRight:10 }}>Delete</span>
                   </Card.Meta>
@@ -126,7 +126,46 @@ class ToDoList extends Component {
       });
   };
 
+  deleteTask = id => {
+    axios
+      .delete(endpoint + "/api/deleteTask/" + id, {
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded"
+        }
+      })
+      .then(res => {
+        // console.log(res);
+        this.getTask();
+      });
+  }
 
-
-
+  render() {
+    return (
+      <div>
+        <div className="row">
+          <Header className="header" as="h2">
+            TO DO List
+          </Header>
+        </div>
+        <div className="row">
+          <Form onSubmit={this.onSubmit}>
+            <Input
+              type="text"
+              name="task"
+              onChange={this.onChange}
+              value={this.state.task}
+              fluid
+              placeholder="Create Task"
+            />
+            {/* <Button>Create Task</Button> */}
+          </Form>
+        </div>
+        <div className="row">
+          <Card.Group>{this.state.items}</Card.Group>
+        </div>
+      </div>
+    );
+  }
 }
+
+export default ToDoList;

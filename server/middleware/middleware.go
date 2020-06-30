@@ -74,9 +74,12 @@ func CreateTask(w http.ResponseWriter, r *http.Request) {
   w.Header().Set("Access-Control-Allow-Methods", "POST")
   w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
   var task models.ToDoList
+  fmt.Println("check a")
   _ = json.NewDecoder(r.Body).Decode(&task)
-  //fmt.Println(task, r.Body)
+  fmt.Println("check b")
+  // fmt.Println(task, r.Body)
   insertOneTask(task)
+  fmt.Println("check c")
   json.NewEncoder(w).Encode(task)
 }
 
@@ -111,9 +114,10 @@ func DeleteTask(w http.ResponseWriter, r *http.Request) {
   w.Header().Set("Access-Control-Allow-Methods", "DELETE")
   w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
   params := mux.Vars(r)
+  fmt.Println("check f")
   deleteOneTask(params["id"])
   json.NewEncoder(w).Encode(params["id"])
-  // json.NewEncoder(w).Encode("Task not found")
+  //json.NewEncoder(w).Encode("Task not found")
 }
 
 //DeleteAllTask route
@@ -154,8 +158,11 @@ func getAllTask() []primitive.M {
 //Insert one task into database
 func insertOneTask(task models.ToDoList) {
   insertResult, err := collection.InsertOne(context.Background(), task)
+  fmt.Println(task)
+  fmt.Println("check d")
 
   if err != nil {
+    fmt.Println("check e")
     log.Fatal(err)
   }
 
@@ -181,7 +188,7 @@ func undoTask(task string) {
   fmt.Println(task)
   id, _ := primitive.ObjectIDFromHex(task)
   filter := bson.M{"_id": id}
-  update := bson.M{"set": bson.M{"status": false}}
+  update := bson.M{"$set": bson.M{"status": false}}
   result, err := collection.UpdateOne(context.Background(), filter, update)
   if err != nil {
     log.Fatal(err)
@@ -199,6 +206,7 @@ func deleteOneTask(task string) {
     log.Fatal(err)
   }
 
+  fmt.Println("check z")
   fmt.Println("Deleted Document", d.DeletedCount)
 }
 
@@ -208,7 +216,7 @@ func deleteAllTask() int64 {
   if err != nil {
     log.Fatal(err)
   }
-
+  fmt.Println("check y")
   fmt.Println("Deleted Document", d.DeletedCount)
   return d.DeletedCount
 }

@@ -12,8 +12,8 @@ function App() {
     <div>
       <Container>
         <ToDoList />
-      <Container>
+      </Container>
     </div>
-  );
+  )
 }
 export default App;
