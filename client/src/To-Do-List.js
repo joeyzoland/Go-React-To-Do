@@ -58,7 +58,10 @@ class ToDoList extends Component {
         this.setState({
           items: res.data.map( item => {
             let color = "yellow";
-            if (item.status) {
+            if (item.status === 1) {
+              color = "blue";
+            }
+            else if (item.status === 2) {
               color = "green";
             }
             return (
@@ -81,6 +84,12 @@ class ToDoList extends Component {
                       onClick={() => this.undoTask(item._id)}
                     />
                     <span style={{ paddingRight:10 }}>Undo</span>
+                    <Icon
+                      name="hourglass start"
+                      color="blue"
+                      onClick={() => this.startTask(item._id)}
+                    />
+                    <span style={{ paddingRight:10 }}>Start</span>
                     <Icon
                       name="delete"
                       color="red"
@@ -127,6 +136,19 @@ class ToDoList extends Component {
       });
   };
 
+  //Note: This will eventually catch timestamp
+  startTask = id => {
+    axios
+    .put(endpoint + "/api/startTask/" + id, {
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded"
+      }
+    })
+    .then(res => {
+      this.getTask();
+    })
+  }
+
   deleteTask = id => {
     axios
       .delete(endpoint + "/api/deleteTask/" + id, {
@@ -153,6 +175,7 @@ class ToDoList extends Component {
   }
 
   render() {
+    console.log(Date.now())
     return (
       <div>
         <div className="row">

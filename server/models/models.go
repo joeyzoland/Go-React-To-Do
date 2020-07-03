@@ -5,5 +5,5 @@ package models
 type ToDoList struct{
   //ID     primitive.ObjectID `json:"_ids omitempty" bson:"_ids, omitempty"`
   Task   string `json:"task, omitempty"`
-  Status bool `'json:"status, omitempty"`
+  Status int `'json:"status, omitempty"`
 }
