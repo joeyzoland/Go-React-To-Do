@@ -24,15 +24,53 @@ class ToDoList extends Component {
     });
   };
 
-  onSubmit = () => {
+  submitHandler = (e) => {
+    console.log("hello")
+    e.preventDefault();
+  };
+
+  //combine this and below into one function
+  submitGoalTask = () => {
     let { task } = this.state;
     //console.log("this.state.task is " + this.state.task)
     if (task) {
+      // task["type"] = 0;
+      // console.log(task);
       axios
         .post(
           endpoint + "/api/task",
           {
-            task
+            "task": task,
+            "type": 0
+          },
+          {
+            headers: {
+              "Content-Type": "application/x-www-form-urlencoded"
+            }
+          }
+        )
+        .then(res => {
+          this.getTask();
+          this.setState({
+            task: ""
+          });
+          //console.log(res)
+        })
+    }
+  };
+
+  submitTimedTask = () => {
+    let { task } = this.state;
+    //console.log("this.state.task is " + this.state.task)
+    if (task) {
+      // task["type"] = 1;
+      // console.log(task);
+      axios
+        .post(
+          endpoint + "/api/task",
+          {
+            "task": task,
+            "type": 1
           },
           {
             headers: {
@@ -51,7 +89,6 @@ class ToDoList extends Component {
   };
 
   getTask = () => {
-    console.log("check f")
     axios.get(endpoint + "/api/task").then(res => {
       //console.log(res)
       if (res.data){
@@ -175,7 +212,6 @@ class ToDoList extends Component {
   }
 
   render() {
-    console.log(Date.now())
     return (
       <div>
         <div className="row">
@@ -184,7 +220,7 @@ class ToDoList extends Component {
           </Header>
         </div>
         <div className="row">
-          <Form onSubmit={this.onSubmit}>
+          <Form onSubmit={this.submitHandler}>
             <Input
               type="text"
               name="task"
@@ -193,8 +229,9 @@ class ToDoList extends Component {
               fluid
               placeholder="Create Task"
             />
-            {/* <Button>Create Task</Button> */}
           </Form>
+          <Button onClick = {this.submitGoalTask}>Goal Task</Button>
+          <Button onClick = {this.submitTimedTask}>Timed Task</Button>
         </div>
         <div className="row">
           <Card.Group>{this.state.items}</Card.Group>
