@@ -25,12 +25,22 @@ class ToDoList extends Component {
   };
 
   submitHandler = (e) => {
-    console.log("hello")
     e.preventDefault();
   };
 
-  //combine this and below into one function
-  submitGoalTask = () => {
+  submitGoalTaskHandler = () => {
+    this.submitTask("goal")
+  }
+
+  submitTimedTaskHandler = () => {
+    this.submitTask("timed")
+  }
+
+  //combine this and below into one function!
+  //figure out how to put multiple fields into request body and read on backend!
+  submitTask = (taskType) => {
+    console.log("taskType")
+    console.log(taskType)
     let { task } = this.state;
     //console.log("this.state.task is " + this.state.task)
     if (task) {
@@ -41,36 +51,7 @@ class ToDoList extends Component {
           endpoint + "/api/task",
           {
             "task": task,
-            "type": 0
-          },
-          {
-            headers: {
-              "Content-Type": "application/x-www-form-urlencoded"
-            }
-          }
-        )
-        .then(res => {
-          this.getTask();
-          this.setState({
-            task: ""
-          });
-          //console.log(res)
-        })
-    }
-  };
-
-  submitTimedTask = () => {
-    let { task } = this.state;
-    //console.log("this.state.task is " + this.state.task)
-    if (task) {
-      // task["type"] = 1;
-      // console.log(task);
-      axios
-        .post(
-          endpoint + "/api/task",
-          {
-            "task": task,
-            "type": 1
+            "type": taskType,
           },
           {
             headers: {
@@ -230,8 +211,8 @@ class ToDoList extends Component {
               placeholder="Create Task"
             />
           </Form>
-          <Button onClick = {this.submitGoalTask}>Goal Task</Button>
-          <Button onClick = {this.submitTimedTask}>Timed Task</Button>
+          <Button onClick = {this.submitGoalTaskHandler}>Goal Task</Button>
+          <Button onClick = {this.submitTimedTaskHandler}>Timed Task</Button>
         </div>
         <div className="row">
           <Card.Group>{this.state.items}</Card.Group>

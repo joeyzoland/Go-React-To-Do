@@ -75,8 +75,10 @@ func CreateTask(w http.ResponseWriter, r *http.Request) {
   w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
   var task models.ToDoList
   fmt.Println("check a")
+  fmt.Println(r.Body)
   _ = json.NewDecoder(r.Body).Decode(&task)
-  fmt.Println("check b")
+  fmt.Println("task")
+  fmt.Println(task)
   // fmt.Println(task, r.Body)
   insertOneTask(task)
   fmt.Println("check c")
