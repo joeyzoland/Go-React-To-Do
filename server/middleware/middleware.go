@@ -121,6 +121,18 @@ func StartTask(w http.ResponseWriter, r *http.Request) {
   json.NewEncoder(w).Encode(params["id"])
 }
 
+//StopTask route
+func StopTask(w http.ResponseWriter, r *http.Request) {
+  w.Header().Set("Content-Type", "application/x-www-form-urlencoded")
+  w.Header().Set("Access-Control-Allow-Origin", "*")
+  w.Header().Set("Access-Control-Allow-Methods", "PUT")
+  w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
+
+  params := mux.Vars(r)
+  stopTask(params["id"])
+  json.NewEncoder(w).Encode(params["id"])
+}
+
 //DeleteTask route
 func DeleteTask(w http.ResponseWriter, r *http.Request) {
   w.Header().Set("Context-Type", "application/x-www-form-urlencoded")
@@ -190,7 +202,7 @@ func taskComplete(task string) {
   fmt.Println(task)
   id, _ := primitive.ObjectIDFromHex(task)
   filter := bson.M{"_id": id}
-  update := bson.M{"$set": bson.M{"status": 2}}
+  update := bson.M{"$set": bson.M{"status": "complete"}}
   result, err := collection.UpdateOne(context.Background(), filter, update)
   if err != nil {
     log.Fatal(err)
@@ -204,7 +216,7 @@ func undoTask(task string) {
   fmt.Println(task)
   id, _ := primitive.ObjectIDFromHex(task)
   filter := bson.M{"_id": id}
-  update := bson.M{"$set": bson.M{"status": 0}}
+  update := bson.M{"$set": bson.M{"status": "incomplete"}}
   result, err := collection.UpdateOne(context.Background(), filter, update)
   if err != nil {
     log.Fatal(err)
@@ -214,9 +226,22 @@ func undoTask(task string) {
 
 func startTask(task string) {
   fmt.Println(task)
+  fmt.Println("say cheese")
   id, _ := primitive.ObjectIDFromHex(task)
   filter := bson.M{"_id": id}
-  update := bson.M{"$set": bson.M{"status": 1}}
+  update := bson.M{"$set": bson.M{"status": "complete"}}
+  result, err := collection.UpdateOne(context.Background(), filter, update)
+  if err != nil {
+    log.Fatal(err)
+  }
+  fmt.Println("modified count: ", result.ModifiedCount)
+}
+
+func stopTask(task string) {
+  fmt.Println(task)
+  id, _ := primitive.ObjectIDFromHex(task)
+  filter := bson.M{"_id": id}
+  update := bson.M{"$set": bson.M{"status": "incomplete"}}
   result, err := collection.UpdateOne(context.Background(), filter, update)
   if err != nil {
     log.Fatal(err)

@@ -51,6 +51,7 @@ class ToDoList extends Component {
           endpoint + "/api/task",
           {
             "task": task,
+            "status": "incomplete",
             "type": taskType,
           },
           {
@@ -76,12 +77,64 @@ class ToDoList extends Component {
         this.setState({
           items: res.data.map( item => {
             let color = "yellow";
-            if (item.status === 1) {
+            if (item.status === "inProgress") {
               color = "blue";
             }
-            else if (item.status === 2) {
+            else if (item.status === "complete") {
               color = "green";
             }
+            let icons;
+            if (item.type === "goal"){
+              icons =
+                <div>
+                  <Icon
+                    name="check circle"
+                    color="green"
+                    onClick={() => this.updateTask(item._id)}
+                  />
+                  <span style={{ paddingRight:10 }}>Done</span>
+                  <Icon
+                    name="undo"
+                    color="yellow"
+                    onClick={() => this.undoTask(item._id)}
+                  />
+                  <span style={{ paddingRight:10 }}>Undo</span>
+                </div>
+            }
+            if (item.type === "timed"){
+              let hourglassIcon;
+              let hourglassText;
+              if (item.status === "incomplete"){
+                hourglassIcon =
+                  <Icon
+                    name="hourglass start"
+                    color="blue"
+                    onClick={() => this.startTask(item._id)}
+                  />
+                hourglassText = "Start"
+              }
+              else{
+                hourglassIcon =
+                  <Icon
+                    name="hourglass end"
+                    color="blue"
+                    onClick={() => this.stopTask(item._id)}
+                  />
+                hourglassText = "End"
+              }
+              icons =
+                <div>
+                  {hourglassIcon}
+                  <span style={{ paddingRight:10 }}>{hourglassText}</span>
+                  <Icon
+                    name="delete"
+                    color="red"
+                    onClick={() => this.deleteTask(item._id)}
+                  />
+                  <span style={{ paddingRight:10 }}>Delete</span>
+                </div>
+            }
+
             return (
               <Card key={item._id} color={color} fluid>
                 <Card.Content>
@@ -90,30 +143,7 @@ class ToDoList extends Component {
                   </Card.Header>
 
                   <Card.Meta textAlign="right">
-                    <Icon
-                      name="check circle"
-                      color="green"
-                      onClick={() => this.updateTask(item._id)}
-                    />
-                    <span style={{ paddingRight:10 }}>Done</span>
-                    <Icon
-                      name="undo"
-                      color="yellow"
-                      onClick={() => this.undoTask(item._id)}
-                    />
-                    <span style={{ paddingRight:10 }}>Undo</span>
-                    <Icon
-                      name="hourglass start"
-                      color="blue"
-                      onClick={() => this.startTask(item._id)}
-                    />
-                    <span style={{ paddingRight:10 }}>Start</span>
-                    <Icon
-                      name="delete"
-                      color="red"
-                      onClick={() => this.deleteTask(item._id)}
-                    />
-                    <span style={{ paddingRight:10 }}>Delete</span>
+                    {icons}
                   </Card.Meta>
                 </Card.Content>
               </Card>
@@ -156,8 +186,21 @@ class ToDoList extends Component {
 
   //Note: This will eventually catch timestamp
   startTask = id => {
+    console.log("hello")
     axios
     .put(endpoint + "/api/startTask/" + id, {
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded"
+      }
+    })
+    .then(res => {
+      this.getTask();
+    })
+  }
+
+  stopTask = id => {
+    axios
+    .put(endpoint + "/api/stopTask/" + id, {
       headers: {
         "Content-Type": "application/x-www-form-urlencoded"
       }
@@ -192,6 +235,7 @@ class ToDoList extends Component {
       })
   }
 
+  //Probably remove && statement below and copy icon conditional logic
   render() {
     return (
       <div>
