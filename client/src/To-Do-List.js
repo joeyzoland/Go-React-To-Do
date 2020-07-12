@@ -235,6 +235,7 @@ class ToDoList extends Component {
       })
   }
 
+  //Consider rendering delete statement below, but need to figure out how to format correctly as the div's would otherwise be different (see how I piped in text for hourglass statuses)
   //Probably remove && statement below and copy icon conditional logic
   render() {
     return (
