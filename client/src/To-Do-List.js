@@ -36,16 +36,19 @@ class ToDoList extends Component {
     this.submitTask("timed")
   }
 
-  //combine this and below into one function!
-  //figure out how to put multiple fields into request body and read on backend!
+  //consider using semantic-ui modal instead of prompting user input
   submitTask = (taskType) => {
-    console.log("taskType")
-    console.log(taskType)
+    console.log("hello")
     let { task } = this.state;
     //console.log("this.state.task is " + this.state.task)
     if (task) {
-      // task["type"] = 0;
-      // console.log(task);
+      if (taskType === "timed"){
+        const duration = prompt("Please insert the duration:")
+        if (duration === ""){
+          alert("Please insert a duration to create this task.")
+          return
+        }
+      }
       axios
         .post(
           endpoint + "/api/task",
@@ -93,12 +96,6 @@ class ToDoList extends Component {
                     onClick={() => this.updateTask(item._id)}
                   />
                   <span style={{ paddingRight:10 }}>Done</span>
-                  <Icon
-                    name="undo"
-                    color="yellow"
-                    onClick={() => this.undoTask(item._id)}
-                  />
-                  <span style={{ paddingRight:10 }}>Undo</span>
                 </div>
             }
             if (item.type === "timed"){
@@ -126,12 +123,6 @@ class ToDoList extends Component {
                 <div>
                   {hourglassIcon}
                   <span style={{ paddingRight:10 }}>{hourglassText}</span>
-                  <Icon
-                    name="delete"
-                    color="red"
-                    onClick={() => this.deleteTask(item._id)}
-                  />
-                  <span style={{ paddingRight:10 }}>Delete</span>
                 </div>
             }
 
@@ -144,6 +135,22 @@ class ToDoList extends Component {
 
                   <Card.Meta textAlign="right">
                     {icons}
+                    <div>
+                      <Icon
+                        name="undo"
+                        color="yellow"
+                        onClick={() => this.undoTask(item._id)}
+                      />
+                      <span style={{ paddingRight:10 }}>Reset</span>
+                    </div>
+                    <div>
+                      <Icon
+                        name="delete"
+                        color="red"
+                        onClick={() => this.deleteTask(item._id)}
+                      />
+                      <span style={{ paddingRight:10 }}>Delete</span>
+                    </div>
                   </Card.Meta>
                 </Card.Content>
               </Card>
@@ -235,6 +242,7 @@ class ToDoList extends Component {
       })
   }
 
+  //Probably use a prompt to change durations
   //Consider rendering delete statement below, but need to figure out how to format correctly as the div's would otherwise be different (see how I piped in text for hourglass statuses)
   //Probably remove && statement below and copy icon conditional logic
   render() {

@@ -74,14 +74,8 @@ func CreateTask(w http.ResponseWriter, r *http.Request) {
   w.Header().Set("Access-Control-Allow-Methods", "POST")
   w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
   var task models.ToDoList
-  fmt.Println("check a")
-  fmt.Println(r.Body)
   _ = json.NewDecoder(r.Body).Decode(&task)
-  fmt.Println("task")
-  fmt.Println(task)
-  // fmt.Println(task, r.Body)
   insertOneTask(task)
-  fmt.Println("check c")
   json.NewEncoder(w).Encode(task)
 }
 
@@ -140,7 +134,6 @@ func DeleteTask(w http.ResponseWriter, r *http.Request) {
   w.Header().Set("Access-Control-Allow-Methods", "DELETE")
   w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
   params := mux.Vars(r)
-  fmt.Println("check f")
   deleteOneTask(params["id"])
   json.NewEncoder(w).Encode(params["id"])
   //json.NewEncoder(w).Encode("Task not found")
@@ -159,6 +152,7 @@ func DeleteAllTask(w http.ResponseWriter, r *http.Request) {
 
 //Get all tasks from the database and return it
 func getAllTask() []primitive.M {
+  fmt.Println("getting all tasks")
   cur, err := collection.Find(context.Background(), bson.D{{}})
   if err != nil {
     log.Fatal(err)
@@ -180,17 +174,16 @@ func getAllTask() []primitive.M {
   }
 
   cur.Close(context.Background())
+  fmt.Println("results")
+  fmt.Println(results)
   return results
 }
 
 //Insert one task into database
 func insertOneTask(task models.ToDoList) {
   insertResult, err := collection.InsertOne(context.Background(), task)
-  fmt.Println(task)
-  fmt.Println("check d")
 
   if err != nil {
-    fmt.Println("check e")
     log.Fatal(err)
   }
 
@@ -199,7 +192,6 @@ func insertOneTask(task models.ToDoList) {
 
 //Update task's status to 2, or done
 func taskComplete(task string) {
-  fmt.Println(task)
   id, _ := primitive.ObjectIDFromHex(task)
   filter := bson.M{"_id": id}
   update := bson.M{"$set": bson.M{"status": "complete"}}
@@ -213,7 +205,6 @@ func taskComplete(task string) {
 
 //Updates task's status to 0, or incomplete
 func undoTask(task string) {
-  fmt.Println(task)
   id, _ := primitive.ObjectIDFromHex(task)
   filter := bson.M{"_id": id}
   update := bson.M{"$set": bson.M{"status": "incomplete"}}
@@ -225,8 +216,6 @@ func undoTask(task string) {
 }
 
 func startTask(task string) {
-  fmt.Println(task)
-  fmt.Println("say cheese")
   id, _ := primitive.ObjectIDFromHex(task)
   filter := bson.M{"_id": id}
   update := bson.M{"$set": bson.M{"status": "complete"}}
@@ -238,7 +227,6 @@ func startTask(task string) {
 }
 
 func stopTask(task string) {
-  fmt.Println(task)
   id, _ := primitive.ObjectIDFromHex(task)
   filter := bson.M{"_id": id}
   update := bson.M{"$set": bson.M{"status": "incomplete"}}
@@ -251,7 +239,6 @@ func stopTask(task string) {
 
 //Delete one task from the database
 func deleteOneTask(task string) {
-  fmt.Println(task)
   id, _ := primitive.ObjectIDFromHex(task)
   filter := bson.M{"_id": id}
   d, err := collection.DeleteOne(context.Background(), filter)
@@ -259,7 +246,6 @@ func deleteOneTask(task string) {
     log.Fatal(err)
   }
 
-  fmt.Println("check z")
   fmt.Println("Deleted Document", d.DeletedCount)
 }
 
@@ -269,7 +255,6 @@ func deleteAllTask() int64 {
   if err != nil {
     log.Fatal(err)
   }
-  fmt.Println("check y")
   fmt.Println("Deleted Document", d.DeletedCount)
   return d.DeletedCount
 }
