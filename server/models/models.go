@@ -8,10 +8,6 @@ type ToDoList struct{
   Task   string `json:"task, omitempty"`
   Status string `'json:"status, omitempty"`
   Type   string `'json:"type, omitempty"`
+  Progress  int `'json:"progress, omitempty"`
+  Target    int `'json:"target, omitempty"`
 }
-
-// type TimedTask struct{
-//   Task   string `json:"task, omitempty"`
-//   CurrentDuration string `json:"currentduration, omitempty"`
-//   TargetDuration string `json:"targetduration, omitempty"`
-// }

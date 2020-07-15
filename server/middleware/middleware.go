@@ -174,8 +174,6 @@ func getAllTask() []primitive.M {
   }
 
   cur.Close(context.Background())
-  fmt.Println("results")
-  fmt.Println(results)
   return results
 }
 

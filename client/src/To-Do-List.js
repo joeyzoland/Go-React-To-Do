@@ -38,17 +38,24 @@ class ToDoList extends Component {
 
   //consider using semantic-ui modal instead of prompting user input
   submitTask = (taskType) => {
-    console.log("hello")
+    let target;
     let { task } = this.state;
     //console.log("this.state.task is " + this.state.task)
     if (task) {
       if (taskType === "timed"){
-        const duration = prompt("Please insert the duration:")
-        if (duration === ""){
-          alert("Please insert a duration to create this task.")
-          return
+        target = prompt("Please insert the target duration, in min:");
+        if (target === ""){
+          alert("Please insert a duration to create this task.");
+          return;
         }
       }
+      else if (taskType === "goal"){
+        target = prompt("Please insert the target quantity, if any:");
+          if (target === ""){
+            let target = 6;
+          }
+      }
+      console.log(target)
       axios
         .post(
           endpoint + "/api/task",
@@ -56,6 +63,7 @@ class ToDoList extends Component {
             "task": task,
             "status": "incomplete",
             "type": taskType,
+            "target": target
           },
           {
             headers: {
@@ -73,9 +81,9 @@ class ToDoList extends Component {
     }
   };
 
+  //figure out how to parse response with multiple values
   getTask = () => {
     axios.get(endpoint + "/api/task").then(res => {
-      //console.log(res)
       if (res.data){
         this.setState({
           items: res.data.map( item => {
