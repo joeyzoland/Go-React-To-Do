@@ -50,9 +50,17 @@ class ToDoList extends Component {
         }
       }
       else if (taskType === "goal"){
-        target = prompt("Please insert the target quantity, if any:");
+        target = prompt("Please insert the target quantity, or leave blank if not applicable:");
       }
-      //Figure out how to read target into post request
+      console.log("target")
+      console.log(target)
+      if (target !== ""){
+        target = parseInt(target)
+        if (isNaN(target) || target <= 0){
+          alert("Please insert an integer of 1 or greater to create this task.");
+          return;
+        }
+      }
       axios
         .post(
           endpoint + "/api/task",
