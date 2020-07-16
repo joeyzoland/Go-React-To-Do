@@ -51,11 +51,8 @@ class ToDoList extends Component {
       }
       else if (taskType === "goal"){
         target = prompt("Please insert the target quantity, if any:");
-          if (target === ""){
-            let target = 6;
-          }
       }
-      console.log(target)
+      //Figure out how to read target into post request
       axios
         .post(
           endpoint + "/api/task",
@@ -63,7 +60,7 @@ class ToDoList extends Component {
             "task": task,
             "status": "incomplete",
             "type": taskType,
-            "target": target
+            "target": parseInt(target)
           },
           {
             headers: {
