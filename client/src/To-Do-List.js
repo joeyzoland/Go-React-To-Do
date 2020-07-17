@@ -60,6 +60,10 @@ class ToDoList extends Component {
           alert("Please insert an integer of 1 or greater to create this task.");
           return;
         }
+        else if(target >= 1000000000000000){
+          alert("Please insert an integer less than 1 quadrillion.");
+          return;
+        }
       }
       axios
         .post(
@@ -93,10 +97,7 @@ class ToDoList extends Component {
         this.setState({
           items: res.data.map( item => {
             let color = "yellow";
-            if (item.status === "inProgress") {
-              color = "blue";
-            }
-            else if (item.status === "complete") {
+            if (item.status === "complete") {
               color = "green";
             }
             let icons;
@@ -139,13 +140,17 @@ class ToDoList extends Component {
                 </div>
             }
 
+            //May want to clean up target rendering, and make conditional
             return (
               <Card key={item._id} color={color} fluid>
                 <Card.Content>
                   <Card.Header textAlign="left">
-                    <div style={{ wordWrap: "break-word" }}>{item.task}</div>
+                    <div>
+                      <div style={{ wordWrap: "break-word", display: "inline-block", width: "40%"}}>{item.task}</div>
+                      <div style={{display: "inline-block", width:"10%"}}></div>
+                      <div style={{display: "inline-block" }} >Target: {item.target}</div>
+                    </div>
                   </Card.Header>
-
                   <Card.Meta textAlign="right">
                     {icons}
                     <div>
