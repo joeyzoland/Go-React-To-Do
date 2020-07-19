@@ -148,7 +148,7 @@ class ToDoList extends Component {
                     <div>
                       <div style={{ wordWrap: "break-word", display: "inline-block", width: "40%"}}>{item.task}</div>
                       <div style={{display: "inline-block", width:"10%"}}></div>
-                      <div style={{display: "inline-block" }} >Target: {item.target}</div>
+                      <div style={{display: "inline-block" }} >Progress: {item.progress}/{item.target}</div>
                     </div>
                   </Card.Header>
                   <Card.Meta textAlign="right">
