@@ -127,6 +127,18 @@ func StopTask(w http.ResponseWriter, r *http.Request) {
   json.NewEncoder(w).Encode(params["id"])
 }
 
+//AddGoalProgress route
+func AddGoalProgress(w http.ResponseWriter, r *http.Request) {
+  w.Header().Set("Content-Type", "application/x-www-form-urlencoded")
+  w.Header().Set("Access-Control-Allow-Origin", "*")
+  w.Header().Set("Access-Control-Allow-Methods", "PUT")
+  w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
+
+  params := mux.Vars(r)
+  addGoalProgress(params["id"])
+  json.NewEncoder(w).Encode(params["id"])
+}
+
 //DeleteTask route
 func DeleteTask(w http.ResponseWriter, r *http.Request) {
   w.Header().Set("Context-Type", "application/x-www-form-urlencoded")
@@ -228,6 +240,19 @@ func stopTask(task string) {
   id, _ := primitive.ObjectIDFromHex(task)
   filter := bson.M{"_id": id}
   update := bson.M{"$set": bson.M{"status": "incomplete"}}
+  result, err := collection.UpdateOne(context.Background(), filter, update)
+  if err != nil {
+    log.Fatal(err)
+  }
+  fmt.Println("modified count: ", result.ModifiedCount)
+}
+
+func addGoalProgress(task string) {
+  id, _ := primitive.ObjectIDFromHex(task)
+  fmt.Println("id")
+  fmt.Println(id)
+  filter := bson.M{"_id": id}
+  update := bson.M{"$inc": bson.M{"progress": 1}}
   result, err := collection.UpdateOne(context.Background(), filter, update)
   if err != nil {
     log.Fatal(err)

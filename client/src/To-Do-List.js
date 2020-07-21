@@ -103,13 +103,23 @@ class ToDoList extends Component {
             let icons;
             if (item.type === "goal"){
               icons =
-                <div>
-                  <Icon
-                    name="check circle"
-                    color="green"
-                    onClick={() => this.updateTask(item._id)}
-                  />
-                  <span style={{ paddingRight:10 }}>Done</span>
+                <div style={{backgroundColor: "blue", marginRight: 0}}>
+                  <div style= {{backgroundColor: "orange", marginRight: 0}}>
+                    <Icon
+                      name="check circle"
+                      color="green"
+                      onClick={() => this.updateTask(item._id)}
+                    />
+                    <span style={{ paddingRight:10}}>Done</span>
+                  </div>
+                  <div style= {{backgroundColor: "pink"}}>
+                    <Icon
+                      name="calendar plus outline"
+                      color="blue"
+                      onClick={() => this.addGoalProgress(item._id)}
+                    />
+                    <span style={{ paddingRight:10}}>Add Progress</span>
+                  </div>
                 </div>
             }
             if (item.type === "timed"){
@@ -134,9 +144,9 @@ class ToDoList extends Component {
                 hourglassText = "End"
               }
               icons =
-                <div>
+                <div style={{ backgroundColor: "green", marginRight: 0}}>
                   {hourglassIcon}
-                  <span style={{ paddingRight:10 }}>{hourglassText}</span>
+                  <span style={{ paddingRight:10}}>{hourglassText}</span>
                 </div>
             }
 
@@ -146,29 +156,31 @@ class ToDoList extends Component {
                 <Card.Content>
                   <Card.Header textAlign="left">
                     <div>
-                      <div style={{ wordWrap: "break-word", display: "inline-block", width: "40%"}}>{item.task}</div>
+                      <div style={{ wordWrap: "break-word", display: "inline-block", width: "40%", backgroundColor: "blue"}}>{item.task}</div>
                       <div style={{display: "inline-block", width:"10%"}}></div>
-                      <div style={{display: "inline-block" }} >Progress: {item.progress}/{item.target}</div>
+                      <div style={{display: "inline-block", backgroundColor: "purple" }} >Progress: {item.progress}/{item.target}</div>
                     </div>
                   </Card.Header>
-                  <Card.Meta textAlign="right">
-                    {icons}
-                    <div>
-                      <Icon
-                        name="undo"
-                        color="yellow"
-                        onClick={() => this.undoTask(item._id)}
-                      />
-                      <span style={{ paddingRight:10 }}>Reset</span>
-                    </div>
-                    <div>
-                      <Icon
-                        name="delete"
-                        color="red"
-                        onClick={() => this.deleteTask(item._id)}
-                      />
-                      <span style={{ paddingRight:10 }}>Delete</span>
-                    </div>
+                  <Card.Meta style = {{textAlign:"right"}}>
+                    <div style={{backgroundColor:"black"}}>
+                      {icons}
+                      <div style={{backgroundColor: "red", marginRight: 0}}>
+                        <Icon
+                          name="undo"
+                          color="yellow"
+                          onClick={() => this.undoTask(item._id)}
+                        />
+                        <span style={{ paddingRight:10 }}>Reset</span>
+                      </div>
+                      <div style={{backgroundColor: "yellow"}}>
+                        <Icon
+                          name="delete"
+                          color="red"
+                          onClick={() => this.deleteTask(item._id)}
+                        />
+                        <span style={{ paddingRight:10 }}>Delete</span>
+                      </div>
+                     </div>
                   </Card.Meta>
                 </Card.Content>
               </Card>
@@ -226,6 +238,18 @@ class ToDoList extends Component {
   stopTask = id => {
     axios
     .put(endpoint + "/api/stopTask/" + id, {
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded"
+      }
+    })
+    .then(res => {
+      this.getTask();
+    })
+  }
+
+  addGoalProgress = id => {
+    axios
+    .put(endpoint + "/api/addGoalProgress/" + id, {
       headers: {
         "Content-Type": "application/x-www-form-urlencoded"
       }
