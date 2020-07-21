@@ -8,6 +8,7 @@ import (
   "fmt"
   "log"
   "net/http"
+  "strconv"
 
   "../models"
   "github.com/gorilla/mux"
@@ -129,13 +130,16 @@ func StopTask(w http.ResponseWriter, r *http.Request) {
 
 //AddGoalProgress route
 func AddGoalProgress(w http.ResponseWriter, r *http.Request) {
+  fmt.Println("cheese")
   w.Header().Set("Content-Type", "application/x-www-form-urlencoded")
   w.Header().Set("Access-Control-Allow-Origin", "*")
   w.Header().Set("Access-Control-Allow-Methods", "PUT")
   w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
 
   params := mux.Vars(r)
-  addGoalProgress(params["id"])
+  fmt.Println(params)
+  // addGoalProgress(params["id"])
+  addGoalProgress(params["id"], params["progress"])
   json.NewEncoder(w).Encode(params["id"])
 }
 
@@ -247,12 +251,15 @@ func stopTask(task string) {
   fmt.Println("modified count: ", result.ModifiedCount)
 }
 
-func addGoalProgress(task string) {
+func addGoalProgress(task string, progress string) {
+  current, _ := strconv.Atoi(progress)
   id, _ := primitive.ObjectIDFromHex(task)
   fmt.Println("id")
   fmt.Println(id)
+  // fmt.Println("progress")
+  // fmt.Println(progress)
   filter := bson.M{"_id": id}
-  update := bson.M{"$inc": bson.M{"progress": 1}}
+  update := bson.M{"$set": bson.M{"progress": current}}
   result, err := collection.UpdateOne(context.Background(), filter, update)
   if err != nil {
     log.Fatal(err)
