@@ -116,7 +116,7 @@ class ToDoList extends Component {
                     <Icon
                       name="calendar plus outline"
                       color="blue"
-                      onClick={() => this.addGoalProgress(item._id, item.progress)}
+                      onClick={() => this.addGoalProgress(item._id, item.progress, item.target)}
                     />
                     <span style={{ paddingRight:10}}>Progress</span>
                   </div>
@@ -247,14 +247,14 @@ class ToDoList extends Component {
     })
   }
 
-  addGoalProgress = (id, progress) => {
-    let current;
+  addGoalProgress = (id, progress, target) => {
     let input;
+    let current;
     input = prompt("Please insert the target progress:");
     current = parseInt(progress) + parseInt(input);
     axios
     // .put(endpoint + "/api/addGoalProgress/" id, {
-    .put(`${endpoint}/api/addGoalProgress/${id}/${current}`, {
+    .put(`${endpoint}/api/addGoalProgress/${id}/${current}/${target}`, {
       headers: {
         "Content-Type": "application/x-www-form-urlencoded"
       }

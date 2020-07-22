@@ -8,6 +8,7 @@ import (
   "fmt"
   "log"
   "net/http"
+  "strconv"
 
   "../models"
   "github.com/gorilla/mux"
@@ -138,7 +139,7 @@ func AddGoalProgress(w http.ResponseWriter, r *http.Request) {
   params := mux.Vars(r)
   fmt.Println(params)
   // addGoalProgress(params["id"])
-  addGoalProgress(params["id"], params["progress"])
+  addGoalProgress(params["id"], params["progress"], params["target"])
   json.NewEncoder(w).Encode(params["id"])
 }
 
@@ -250,12 +251,18 @@ func stopTask(task string) {
   fmt.Println("modified count: ", result.ModifiedCount)
 }
 
-func addGoalProgress(task string, progress string) {
+func addGoalProgress(task string, progress string, target string) {
   id, _ := primitive.ObjectIDFromHex(task)
-  fmt.Println("id")
-  fmt.Println(id)
   filter := bson.M{"_id": id}
-  update := bson.M{"$set": bson.M{"progress": progress}}
+  var update bson.M
+  intProgress, _ := strconv.Atoi(progress)
+  intTarget, _ := strconv.Atoi(target)
+  if intProgress < intTarget {
+    update = bson.M{"$set": bson.M{"progress": progress}}
+  } else {
+    //Potentially add validation to frontend to not accept negative targets
+    update = bson.M{"$set": bson.M{"progress": target, "status": "complete"}}
+  }
   result, err := collection.UpdateOne(context.Background(), filter, update)
   if err != nil {
     log.Fatal(err)
