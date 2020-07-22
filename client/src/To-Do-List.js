@@ -249,7 +249,9 @@ class ToDoList extends Component {
 
   addGoalProgress = (id, progress) => {
     let current;
-    current = progress + 1;
+    let input;
+    input = prompt("Please insert the target progress:");
+    current = parseInt(progress) + parseInt(input);
     axios
     // .put(endpoint + "/api/addGoalProgress/" id, {
     .put(`${endpoint}/api/addGoalProgress/${id}/${current}`, {

@@ -8,7 +8,6 @@ import (
   "fmt"
   "log"
   "net/http"
-  "strconv"
 
   "../models"
   "github.com/gorilla/mux"
@@ -252,14 +251,11 @@ func stopTask(task string) {
 }
 
 func addGoalProgress(task string, progress string) {
-  current, _ := strconv.Atoi(progress)
   id, _ := primitive.ObjectIDFromHex(task)
   fmt.Println("id")
   fmt.Println(id)
-  // fmt.Println("progress")
-  // fmt.Println(progress)
   filter := bson.M{"_id": id}
-  update := bson.M{"$set": bson.M{"progress": current}}
+  update := bson.M{"$set": bson.M{"progress": progress}}
   result, err := collection.UpdateOne(context.Background(), filter, update)
   if err != nil {
     log.Fatal(err)
