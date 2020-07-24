@@ -88,7 +88,7 @@ func TaskComplete(w http.ResponseWriter, r *http.Request) {
   w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
 
   params := mux.Vars(r)
-  taskComplete(params["id"])
+  taskComplete(params["id"], params["target"])
   json.NewEncoder(w).Encode(params["id"])
 }
 
@@ -205,10 +205,10 @@ func insertOneTask(task models.ToDoList) {
 }
 
 //Update task's status to 2, or done
-func taskComplete(task string) {
+func taskComplete(task string, target string) {
   id, _ := primitive.ObjectIDFromHex(task)
   filter := bson.M{"_id": id}
-  update := bson.M{"$set": bson.M{"status": "complete"}}
+  update := bson.M{"$set": bson.M{"status": "complete", "progress": target}}
   result, err := collection.UpdateOne(context.Background(), filter, update)
   if err != nil {
     log.Fatal(err)
@@ -221,7 +221,7 @@ func taskComplete(task string) {
 func undoTask(task string) {
   id, _ := primitive.ObjectIDFromHex(task)
   filter := bson.M{"_id": id}
-  update := bson.M{"$set": bson.M{"status": "incomplete"}}
+  update := bson.M{"$set": bson.M{"status": "incomplete", "progress": 0}}
   result, err := collection.UpdateOne(context.Background(), filter, update)
   if err != nil {
     log.Fatal(err)

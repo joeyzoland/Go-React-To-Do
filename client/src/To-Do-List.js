@@ -108,7 +108,7 @@ class ToDoList extends Component {
                     <Icon
                       name="check circle"
                       color="green"
-                      onClick={() => this.updateTask(item._id)}
+                      onClick={() => this.updateTask(item._id, item.target)}
                     />
                     <span style={{ paddingRight:10}}>Done</span>
                   </div>
@@ -195,9 +195,9 @@ class ToDoList extends Component {
     });
   };
 
-  updateTask = id => {
+  updateTask = (id, target) => {
     axios
-      .put(endpoint + "/api/task/" + id, {
+      .put(endpoint + `/api/task/${id}/${target}`, {
         headers: {
           "Content-Type": "application/x-www-form-urlencoded"
         }
