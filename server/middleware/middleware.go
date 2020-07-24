@@ -166,6 +166,16 @@ func DeleteAllTask(w http.ResponseWriter, r *http.Request) {
   // json.NewEncoder(w).Encode("Task not found")
 }
 
+//ResetAllTask route
+func ResetAllTask(w http.ResponseWriter, r *http.Request) {
+  w.Header().Set("Context-Type", "application/x-www-form-urlencoded")
+  w.Header().Set("Access-Control-Allow-Origin", "*")
+  w.Header().Set("Access-Control-Allow-Methods", "PUT")
+  w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
+  count := resetAllTask()
+  json.NewEncoder(w).Encode(count)
+}
+
 //Get all tasks from the database and return it
 func getAllTask() []primitive.M {
   fmt.Println("getting all tasks")
@@ -290,4 +300,16 @@ func deleteAllTask() int64 {
   }
   fmt.Println("Deleted Document", d.DeletedCount)
   return d.DeletedCount
+}
+
+//Resets all tasks in the database
+func resetAllTask() int64 {
+  filter := bson.D{{}}
+  update := bson.M{"$set": bson.M{"status": "incomplete", "progress": 0}}
+  r, err := collection.UpdateMany(context.Background(), filter, update)
+  if err != nil {
+    log.Fatal(err)
+  }
+  fmt.Println("modified count: ", r.ModifiedCount)
+  return r.ModifiedCount
 }

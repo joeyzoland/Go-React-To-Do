@@ -17,5 +17,7 @@ func Router() *mux.Router {
   router.HandleFunc("/api/addGoalProgress/{id}/{progress}/{target}", middleware.AddGoalProgress).Methods("PUT", "OPTIONS")
   router.HandleFunc("/api/deleteTask/{id}", middleware.DeleteTask).Methods("DELETE", "OPTIONS")
   router.HandleFunc("/api/deleteAllTask", middleware.DeleteAllTask).Methods("DELETE", "OPTIONS")
+  router.HandleFunc("/api/resetAllTask",
+  middleware.ResetAllTask).Methods("PUT", "OPTIONS")
   return router
 }

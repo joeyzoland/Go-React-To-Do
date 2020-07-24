@@ -289,6 +289,18 @@ class ToDoList extends Component {
       })
   }
 
+  resetAllTask = () => {
+    axios
+      .put(endpoint + "/api/resetAllTask", {
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded"
+        }
+      })
+      .then(res => {
+        this.getTask();
+      })
+  }
+
   //Probably use a prompt to change durations
   //Consider rendering delete statement below, but need to figure out how to format correctly as the div's would otherwise be different (see how I piped in text for hourglass statuses)
   //Probably remove && statement below and copy icon conditional logic
@@ -321,6 +333,7 @@ class ToDoList extends Component {
           <div>
             <br></br>
             <Button onClick = {this.deleteAllTask}> DELETE ALL </Button>
+            <Button onClick = {this.resetAllTask}> RESET ALL </Button>
           </div>
         }
       </div>
