@@ -139,7 +139,7 @@ class ToDoList extends Component {
                   <Icon
                     name="hourglass end"
                     color="blue"
-                    onClick={() => this.stopTask(item._id)}
+                    onClick={() => this.stopTask(item._id, item.start)}
                   />
                 hourglassText = "End"
               }
@@ -223,9 +223,9 @@ class ToDoList extends Component {
 
   //Note: This will eventually catch timestamp
   startTask = id => {
-    console.log("hello")
+    const time = new Date().getTime();
     axios
-    .put(endpoint + "/api/startTask/" + id, {
+    .put(endpoint + `/api/startTask/${id}/${time}`, {
       headers: {
         "Content-Type": "application/x-www-form-urlencoded"
       }
@@ -235,9 +235,12 @@ class ToDoList extends Component {
     })
   }
 
-  stopTask = id => {
+  stopTask = (id, start) => {
+    const time = new Date().getTime();
+    //Divide by 60000 to convert milliseconds/epoch to minutes
+    var progress = time - start;
     axios
-    .put(endpoint + "/api/stopTask/" + id, {
+    .put(endpoint + `/api/stopTask/${id}/${progress}`, {
       headers: {
         "Content-Type": "application/x-www-form-urlencoded"
       }

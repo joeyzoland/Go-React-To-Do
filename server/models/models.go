@@ -10,4 +10,5 @@ type ToDoList struct{
   Type   string `'json:"type, omitempty"`
   Progress  int `'json:"progress, omitempty"`
   Target    int `'json:"target, omitempty"`
+  Start     int `'json:"start, omitempty"`
 }

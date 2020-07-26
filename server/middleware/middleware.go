@@ -9,6 +9,7 @@ import (
   "log"
   "net/http"
   "strconv"
+  //"math"
 
   "../models"
   "github.com/gorilla/mux"
@@ -112,7 +113,7 @@ func StartTask(w http.ResponseWriter, r *http.Request) {
   w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
 
   params := mux.Vars(r)
-  startTask(params["id"])
+  startTask(params["id"], params["time"])
   json.NewEncoder(w).Encode(params["id"])
 }
 
@@ -124,7 +125,7 @@ func StopTask(w http.ResponseWriter, r *http.Request) {
   w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
 
   params := mux.Vars(r)
-  stopTask(params["id"])
+  stopTask(params["id"], params["progress"])
   json.NewEncoder(w).Encode(params["id"])
 }
 
@@ -239,10 +240,10 @@ func undoTask(task string) {
   fmt.Println("modified count: ", result.ModifiedCount)
 }
 
-func startTask(task string) {
+func startTask(task string, time string) {
   id, _ := primitive.ObjectIDFromHex(task)
   filter := bson.M{"_id": id}
-  update := bson.M{"$set": bson.M{"status": "complete"}}
+  update := bson.M{"$set": bson.M{"status": "complete", "start": time}}
   result, err := collection.UpdateOne(context.Background(), filter, update)
   if err != nil {
     log.Fatal(err)
@@ -250,10 +251,17 @@ func startTask(task string) {
   fmt.Println("modified count: ", result.ModifiedCount)
 }
 
-func stopTask(task string) {
+func stopTask(task string, progress string) {
+  fmt.Println("progress")
+  fmt.Println(progress)
+  intProgress, _ := strconv.Atoi(progress)
+  minuteProgress := intProgress / 60000
+  fmt.Println("minuteProgress")
+  fmt.Println(minuteProgress)
   id, _ := primitive.ObjectIDFromHex(task)
   filter := bson.M{"_id": id}
-  update := bson.M{"$set": bson.M{"status": "incomplete"}}
+  update := bson.M{"$set": bson.M{"status": "incomplete", "start": 0},
+  "$inc": bson.M{"progress": minuteProgress}}
   result, err := collection.UpdateOne(context.Background(), filter, update)
   if err != nil {
     log.Fatal(err)
@@ -268,11 +276,12 @@ func addGoalProgress(task string, progress string, target string) {
   intProgress, _ := strconv.Atoi(progress)
   intTarget, _ := strconv.Atoi(target)
   if intProgress < intTarget {
-    update = bson.M{"$set": bson.M{"progress": progress}}
+    update = bson.M{"$set": bson.M{"progress": progress, "status": "incomplete"}}
   } else {
     //Potentially add validation to frontend to not accept negative targets
     update = bson.M{"$set": bson.M{"progress": target, "status": "complete"}}
   }
+
   result, err := collection.UpdateOne(context.Background(), filter, update)
   if err != nil {
     log.Fatal(err)
