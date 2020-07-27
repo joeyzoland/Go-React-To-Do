@@ -125,7 +125,7 @@ func StopTask(w http.ResponseWriter, r *http.Request) {
   w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
 
   params := mux.Vars(r)
-  stopTask(params["id"], params["progress"])
+  stopTask(params["id"], params["progress"], params["target"])
   json.NewEncoder(w).Encode(params["id"])
 }
 
@@ -243,7 +243,7 @@ func undoTask(task string) {
 func startTask(task string, time string) {
   id, _ := primitive.ObjectIDFromHex(task)
   filter := bson.M{"_id": id}
-  update := bson.M{"$set": bson.M{"status": "complete", "start": time}}
+  update := bson.M{"$set": bson.M{"status": "inProgress", "start": time}}
   result, err := collection.UpdateOne(context.Background(), filter, update)
   if err != nil {
     log.Fatal(err)
@@ -251,17 +251,24 @@ func startTask(task string, time string) {
   fmt.Println("modified count: ", result.ModifiedCount)
 }
 
-func stopTask(task string, progress string) {
+func stopTask(task string, progress string, target string) {
   fmt.Println("progress")
   fmt.Println(progress)
   intProgress, _ := strconv.Atoi(progress)
   minuteProgress := intProgress / 60000
+  intTarget, _ := strconv.Atoi(target)
   fmt.Println("minuteProgress")
   fmt.Println(minuteProgress)
   id, _ := primitive.ObjectIDFromHex(task)
   filter := bson.M{"_id": id}
-  update := bson.M{"$set": bson.M{"status": "incomplete", "start": 0},
-  "$inc": bson.M{"progress": minuteProgress}}
+  var update bson.M
+  if minuteProgress < intTarget {
+    update = bson.M{"$set": bson.M{"status": "incomplete", "start": 0, "progress": minuteProgress}}
+  } else {
+    update = bson.M{"$set": bson.M{"status": "complete", "start": 0, "progress": target}}
+  }
+  // update := bson.M{"$set": bson.M{"status": "incomplete", "start": 0},
+  // "$inc": bson.M{"progress": minuteProgress}}
   result, err := collection.UpdateOne(context.Background(), filter, update)
   if err != nil {
     log.Fatal(err)

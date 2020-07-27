@@ -99,6 +99,8 @@ class ToDoList extends Component {
             let color = "yellow";
             if (item.status === "complete") {
               color = "green";
+            } else if (item.status === "inProgress") {
+              color = "blue"
             }
             let icons;
             if (item.type === "goal"){
@@ -134,12 +136,12 @@ class ToDoList extends Component {
                   />
                 hourglassText = "Start"
               }
-              else{
+              else if (item.status === "inProgress") {
                 hourglassIcon =
                   <Icon
                     name="hourglass end"
                     color="blue"
-                    onClick={() => this.stopTask(item._id, item.start)}
+                    onClick={() => this.stopTask(item._id, item.progress, item.start, item.target)}
                   />
                 hourglassText = "End"
               }
@@ -235,12 +237,12 @@ class ToDoList extends Component {
     })
   }
 
-  stopTask = (id, start) => {
+  stopTask = (id, currentProgress, start, target) => {
     const time = new Date().getTime();
-    //Divide by 60000 to convert milliseconds/epoch to minutes
-    var progress = time - start;
+    //Multiply by 60000 to convert milliseconds/epoch to minutes
+    var progress = (currentProgress * 60000) + (time - start);
     axios
-    .put(endpoint + `/api/stopTask/${id}/${progress}`, {
+    .put(endpoint + `/api/stopTask/${id}/${progress}/${target}`, {
       headers: {
         "Content-Type": "application/x-www-form-urlencoded"
       }
