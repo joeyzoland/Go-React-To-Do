@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import axios from "axios";
 import { Card, Header, Form, Input, Icon, Button } from "semantic-ui-react";
+import './css/To-Do-List.css'
 
 let endpoint = "http://localhost:8080";
 
@@ -163,8 +164,8 @@ class ToDoList extends Component {
                       <div style={{display: "inline-block", backgroundColor: "purple" }} >Progress: {item.progress}/{item.target}</div>
                     </div>
                   </Card.Header>
-                  <Card.Meta style = {{textAlign:"right"}}>
-                    <div style={{backgroundColor:"black"}}>
+                  <Card.Meta style = {{backgroundColor: "pink", textAlign: "right"}}>
+                    <div style={{display:"inline-block"}}>
                       {icons}
                       <div style={{backgroundColor: "red", marginRight: 0}}>
                         <Icon
@@ -312,6 +313,7 @@ class ToDoList extends Component {
   render() {
     return (
       <div>
+        <div className="testForSure">Hello</div>
         <div className="row">
           <Header className="header" as="h2">
             TO DO List

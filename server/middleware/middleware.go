@@ -9,7 +9,6 @@ import (
   "log"
   "net/http"
   "strconv"
-  //"math"
 
   "../models"
   "github.com/gorilla/mux"
